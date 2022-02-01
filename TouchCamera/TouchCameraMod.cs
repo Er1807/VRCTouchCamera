@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using UnhollowerBaseLib;
 using System.IO;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.0", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.1", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
@@ -33,11 +33,13 @@ namespace TouchCamera
 
             var buttonParent = cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main").gameObject;
             LoggerInstance.Msg("Registering TouchButton");
-            Il2CppArrayBase<Button> allButtons = buttonParent.GetComponentsInChildren<Button>();
-            foreach (var item in allButtons)
+            foreach (var item in buttonParent.GetComponentsInChildren<Button>(true))
             {
                 item.gameObject.AddComponent<TouchButton>();
-
+            }
+            foreach (var item in buttonParent.GetComponentsInChildren<Toggle>(true))
+            {
+                item.gameObject.AddComponent<TouchButton>();
             }
             LoggerInstance.Msg("Registered TouchButton");
 
