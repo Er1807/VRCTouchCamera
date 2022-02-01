@@ -1,0 +1,19 @@
+{
+  "_id": 256,
+  "name": "Camera Animations",
+  "modversion": "1.0.0",
+  "vrchatversion": "1160",
+  "loaderversion": "v0.5.1",
+  "modtype": "Mod",
+  "author": "Eric van Fandenfart",
+  "description": "Use the buttons on the Camera as touchbutton. These are triggered by the Right pointer finger",
+  "searchtags": [
+    "Camera", "Touchscreen"
+  ],
+  "requirements": [
+  ],
+  "downloadlink": "https://github.com/Er1807/CameraAnimation/releases/download/v1.1.5/CameraAnimation.dll",
+  "sourcelink": "https://github.com/Er1807/CameraAnimation",
+  "changelog": "Initial Release",
+  "embedcolor": "7F60CA"
+}

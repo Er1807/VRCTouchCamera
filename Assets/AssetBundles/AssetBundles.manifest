@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 52985890
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: shaderreplacment
+      Dependencies: {}
