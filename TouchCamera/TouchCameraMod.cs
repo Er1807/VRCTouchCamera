@@ -6,8 +6,9 @@ using System.Collections;
 using UnityEngine.UI;
 using UnhollowerBaseLib;
 using System.IO;
+using System.Collections.Generic;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.1", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.2", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
@@ -57,35 +58,47 @@ namespace TouchCamera
                 bundle = AssetBundle.LoadFromMemory(tempStream.ToArray(), 0);
             }
 
-            var uishader = bundle.LoadAsset<Shader>("Assets/UIReplacement.shader");
-            var uishaderTMPRO = bundle.LoadAsset<Shader>("Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-Replacment.shader");
+            uishader = bundle.LoadAsset<Shader>("Assets/UIReplacement.shader");
+            uishaderTMPRO = bundle.LoadAsset<Shader>("Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile-Replacment.shader");
 
             LoggerInstance.Msg("Loading shaders");
             LoggerInstance.Msg("Applying shaders");
 
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/Scroll View/Viewport/Content/Space/Icon", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/ControlGroup_Space/Scroll View/Viewport/Content/Attached/Icon", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Controls _ OnScreen/FrontCenter/Zoom _ Slider/Slider/Background/Fill Area", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Controls _ OnScreen/FrontCenter/Zoom _ Slider/Slider/Background/Fill Area/Fill", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Controls _ OnScreen/FrontCenter/Zoom _ Slider/Slider/Background/Fill Area", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/Scroll View/Scrollbar Horizontal/Sliding Area/Handle", uishader);
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/RightArrow/Image", uishader);
-
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/Scroll View/Viewport/Content/CameraAimMode/Text (TMP)", uishaderTMPRO);
-
-
+            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
+            {
+                ReplaceShader(item);
+            } 
 
             while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
                 yield return null;
 
-            ReplaceShader(cameraobj, "ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow", uishader);
+            //do it a second time to make sure all sub components also got it
+            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
+            {
+                ReplaceShader(item);
+            }
 
             LoggerInstance.Msg("Disabled Overrender");
         }
 
-        private void ReplaceShader(Transform transform,string path, Shader shader)
+        private Dictionary<string, Material> replacmentMaterials = new Dictionary<string, Material>();
+        private Shader uishader;
+        private Shader uishaderTMPRO;
+
+        private void ReplaceShader(CanvasRenderer renderer)
         {
-            transform.Find(path).GetComponent<CanvasRenderer>().GetMaterial().shader = shader;
+            if (renderer.GetMaterial() == null || replacmentMaterials.ContainsValue(renderer.GetMaterial()) || (!renderer.GetMaterial().name.Contains("NotoSans-Regular") && !renderer.GetMaterial().name.Contains("VRChat/UI/Default") ))
+                return;
+
+
+            if (!replacmentMaterials.ContainsKey(renderer.GetMaterial().name))
+            {
+                LoggerInstance.Msg($"Creating a new material for {renderer.GetMaterial().name}");
+                replacmentMaterials[renderer.GetMaterial().name] = Object.Instantiate(renderer.GetMaterial());
+                replacmentMaterials[renderer.GetMaterial().name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular")  ? uishaderTMPRO : uishader;
+            }
+            
+            renderer.SetMaterial(replacmentMaterials[renderer.GetMaterial().name], 0);
         }
 
         private void SetLayerRecursively(GameObject obj,int newLayer)
