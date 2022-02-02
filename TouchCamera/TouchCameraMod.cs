@@ -69,10 +69,7 @@ namespace TouchCamera
             foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
             {
                 ReplaceShader(item);
-                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += async (obj) => {
-                    await Task.Delay(100);
-                    ReplaceShader(obj.GetComponent<CanvasRenderer>());
-                    };
+                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += obj => MelonCoroutines.Start(UpdateShader(obj));
             } 
 
             while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
