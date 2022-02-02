@@ -7,8 +7,10 @@ using UnityEngine.UI;
 using UnhollowerBaseLib;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.2", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.3", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
@@ -67,16 +69,26 @@ namespace TouchCamera
             foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
             {
                 ReplaceShader(item);
+                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += async (obj) => {
+                    await Task.Delay(100);
+                    ReplaceShader(obj.GetComponent<CanvasRenderer>());
+                    };
             } 
 
             while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
                 yield return null;
 
             //do it a second time to make sure all sub components also got it
-            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
+            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true).Where(x=>x.GetComponent<EnableDisableListener>() == null))
             {
                 ReplaceShader(item);
+                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += async (obj) => {
+                    await Task.Delay(100);
+                    ReplaceShader(obj.GetComponent<CanvasRenderer>());
+                };
             }
+
+            
 
             LoggerInstance.Msg("Disabled Overrender");
         }
@@ -90,15 +102,15 @@ namespace TouchCamera
             if (renderer.GetMaterial() == null || replacmentMaterials.ContainsValue(renderer.GetMaterial()) || (!renderer.GetMaterial().name.Contains("NotoSans-Regular") && !renderer.GetMaterial().name.Contains("VRChat/UI/Default") ))
                 return;
 
-
-            if (!replacmentMaterials.ContainsKey(renderer.GetMaterial().name))
+            var name = renderer.GetMaterial().name.Replace("(Clone)", "");
+            if (!replacmentMaterials.ContainsKey(name))
             {
-                LoggerInstance.Msg($"Creating a new material for {renderer.GetMaterial().name}");
-                replacmentMaterials[renderer.GetMaterial().name] = Object.Instantiate(renderer.GetMaterial());
-                replacmentMaterials[renderer.GetMaterial().name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular")  ? uishaderTMPRO : uishader;
+                LoggerInstance.Msg($"Creating a new material for {name}");
+                replacmentMaterials[name] = Object.Instantiate(renderer.GetMaterial());
+                replacmentMaterials[name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular")  ? uishaderTMPRO : uishader;
             }
             
-            renderer.SetMaterial(replacmentMaterials[renderer.GetMaterial().name], 0);
+            renderer.SetMaterial(replacmentMaterials[name], 0);
         }
 
         private void SetLayerRecursively(GameObject obj,int newLayer)
