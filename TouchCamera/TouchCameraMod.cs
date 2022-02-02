@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.3", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.4", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
@@ -82,15 +82,19 @@ namespace TouchCamera
             foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true).Where(x=>x.GetComponent<EnableDisableListener>() == null))
             {
                 ReplaceShader(item);
-                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += async (obj) => {
-                    await Task.Delay(100);
-                    ReplaceShader(obj.GetComponent<CanvasRenderer>());
-                };
+                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += obj => MelonCoroutines.Start(UpdateShader(obj));
             }
 
             
 
             LoggerInstance.Msg("Disabled Overrender");
+        }
+
+
+        private IEnumerator UpdateShader(GameObject obj)
+        {
+            yield return new WaitForSeconds(0.1f);
+            ReplaceShader(obj.GetComponent<CanvasRenderer>());
         }
 
         private Dictionary<string, Material> replacmentMaterials = new Dictionary<string, Material>();
