@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.4", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.5", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
@@ -109,6 +109,7 @@ namespace TouchCamera
                 LoggerInstance.Msg($"Creating a new material for {name}");
                 replacmentMaterials[name] = Object.Instantiate(renderer.GetMaterial());
                 replacmentMaterials[name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular")  ? uishaderTMPRO : uishader;
+                replacmentMaterials[name].hideFlags = HideFlags.HideAndDontSave;
             }
             
             renderer.SetMaterial(replacmentMaterials[name], 0);

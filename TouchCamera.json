@@ -1,7 +1,7 @@
 {
   "_id": 302,
   "name": "TouchCamera",
-  "modversion": "1.0.3",
+  "modversion": "1.0.5",
   "vrchatversion": "1160",
   "loaderversion": "v0.5.3",
   "modtype": "Mod",
@@ -12,7 +12,7 @@
   ],
   "requirements": [
   ],
-  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v1.0.3/TouchCamera.dll",
+  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v1.0.5/TouchCamera.dll",
   "sourcelink": "https://github.com/Er1807/VRCTouchCamera",
   "changelog": "Initial Release",
   "embedcolor": "7F60CA"
