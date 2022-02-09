@@ -20,8 +20,14 @@ namespace TouchCamera
         private RectTransform rectTransform;
         private Button button;
         private Toggle toggle;
+        private ScrollRect scrollrect;
         private Il2CppStructArray<Vector3> worldPosition;
         static float lastInteraction = 0;
+
+        public int totalCountInParent;
+        public int buttonPositionInParent;
+
+
         static bool lastPressed = false;
         bool lastPressedLocal = false;
         
@@ -31,6 +37,31 @@ namespace TouchCamera
             button = gameObject.GetComponent<Button>();
             toggle = gameObject.GetComponent<Toggle>();
             worldPosition = new Il2CppStructArray<Vector3>(4);
+            if(rectTransform.parent.name == "Content")
+            {
+                scrollrect = rectTransform.parent.parent.parent.GetComponent<ScrollRect>();
+                totalCountInParent = rectTransform.parent.childCount;
+                for (int i = 0; i < totalCountInParent; i++)
+                {
+                    if (rectTransform.parent.GetChild(i) == rectTransform)
+                    {
+                        buttonPositionInParent = i;
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        public bool IsVisible()
+        {
+            if (scrollrect == null)
+                return true;
+
+            int startpoint = (int) Math.Round((totalCountInParent - 6) * scrollrect.horizontalNormalizedPosition);
+            int endpoint = startpoint + 5;
+
+            return buttonPositionInParent >= startpoint && buttonPositionInParent <= endpoint;
         }
 
         void Update()
@@ -53,6 +84,9 @@ namespace TouchCamera
             Vector3 max = Vector3.Max(pos1, pos2);
 
             Vector3 fingerPosValue = fingerPos.Value;
+
+            if (!IsVisible())
+                return;
 
             if (fingerPosValue.x < max.x &&
                 fingerPosValue.y < max.y &&
