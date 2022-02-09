@@ -30,7 +30,8 @@ namespace TouchCamera
 
         static bool lastPressed = false;
         bool lastPressedLocal = false;
-        
+        static TouchButton lastTouchButton = null;
+
         public TouchButton(IntPtr obj0) : base(obj0)
         {
             rectTransform = gameObject.GetComponent<RectTransform>();
@@ -99,18 +100,18 @@ namespace TouchCamera
                 {
                     lastPressed = true; 
                     lastPressedLocal = true;
+                    lastTouchButton = this;
                     button?.Press();
                     toggle?.InternalToggle();
                 }
             }
-            else if(lastPressedLocal)
+            else if(lastPressedLocal || !lastTouchButton.isActiveAndEnabled)
             {
                 lastPressedLocal = false;
+                lastTouchButton = null;
                 lastPressed = false;
                 lastInteraction = Time.time;
             }
-
-            
         }
     }
 }
