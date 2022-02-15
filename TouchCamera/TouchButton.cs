@@ -105,7 +105,7 @@ namespace TouchCamera
                     toggle?.InternalToggle();
                 }
             }
-            else if(lastPressedLocal || !lastTouchButton.isActiveAndEnabled)
+            else if(lastPressedLocal || !(lastTouchButton?.isActiveAndEnabled ?? true))
             {
                 lastPressedLocal = false;
                 lastTouchButton = null;

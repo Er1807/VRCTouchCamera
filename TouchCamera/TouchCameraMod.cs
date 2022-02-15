@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.6", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.7", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
