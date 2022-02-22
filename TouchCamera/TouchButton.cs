@@ -12,11 +12,8 @@ namespace TouchCamera
     public class TouchButton : MonoBehaviour
     {
 
-        //[method: HideFromIl2Cpp]
-        //public event Action? OnEnabled;
 
-        //[method: HideFromIl2Cpp]
-        //public event Action? OnDisabled;
+
         private RectTransform rectTransform;
         private Button button;
         private Toggle toggle;
@@ -67,34 +64,39 @@ namespace TouchCamera
 
         void Update()
         {
-            if (lastInteraction + 1.5f > Time.time)
+            if (lastInteraction + .5f > Time.time)
                 return;
             Vector3? fingerPos = Networking.LocalPlayer?.GetBonePosition(HumanBodyBones.RightIndexDistal);
             if (!fingerPos.HasValue)
                 return;
 
+            if (!IsVisible())
+                return;
             //Each corner provides its world space value. The returned array of 4 vertices is clockwise.
             //It starts bottom left and rotates to top left, then top right, and finally bottom right.
             //Note that bottom left, for example, is an (x, y, z) vector with x being left and y being bottom.
             rectTransform.GetWorldCorners(worldPosition);
 
-            Vector3 pos1 = worldPosition[0] + (Vector3.Scale(rectTransform.forward, new Vector3(0.05f, 0.05f, 0.05f)));
-            Vector3 pos2 = worldPosition[2] - (Vector3.Scale(rectTransform.forward, new Vector3(0.05f, 0.05f, 0.05f)));
-
-            Vector3 min = Vector3.Min(pos1, pos2);
-            Vector3 max = Vector3.Max(pos1, pos2);
-
+            Plane plane = new Plane(worldPosition[0], worldPosition[1], worldPosition[2]);
             Vector3 fingerPosValue = fingerPos.Value;
 
-            if (!IsVisible())
+            Vector3 closestPoint = plane.ClosestPointOnPlane(fingerPosValue);
+
+            float distance = Vector3.Distance(fingerPosValue, closestPoint);
+
+            if (distance > 0.05f)
                 return;
 
-            if (fingerPosValue.x < max.x &&
-                fingerPosValue.y < max.y &&
-                fingerPosValue.z < max.z &&
-                fingerPosValue.x > min.x &&
-                fingerPosValue.y > min.y &&
-                fingerPosValue.z > min.z)
+            float d1 = Vector3.Distance(closestPoint, worldPosition[0]);
+            float d2 = Vector3.Distance(closestPoint, worldPosition[1]);
+            float d3 = Vector3.Distance(closestPoint, worldPosition[2]);
+            float d4 = Vector3.Distance(closestPoint, worldPosition[3]);
+
+            float d = Vector3.Distance(worldPosition[0], worldPosition[1]);
+
+
+
+            if (d1 < d && d2 < d && d3 < d && d4 < d)
             {
                 if (!lastPressed)
                 {
