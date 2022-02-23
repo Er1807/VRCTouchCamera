@@ -9,6 +9,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CameraUiAnimator = MonoBehaviourPublicReObSiObInSiBuReVeUnique;
 
 [assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.8", "Eric van Fandenfart")]
 [assembly: MelonGame]
@@ -18,7 +19,7 @@ namespace TouchCamera
 
     public class TouchCameraMod : MelonMod
     {
-        
+
 
         public override void OnApplicationStart()
         {
@@ -66,27 +67,56 @@ namespace TouchCamera
             LoggerInstance.Msg("Loading shaders");
             LoggerInstance.Msg("Applying shaders");
 
+
+
+            var rightArrow = cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/RightArrow");
+            var leftArrow = cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/LeftArrow");
+            //rightArrow.GetComponent<CameraUiAnimator>().
+            rightArrow.GetComponent<CameraUiAnimator>().enabled = false;
+            leftArrow.GetComponent<CameraUiAnimator>().enabled = false;
+
+            rightArrow.localScale = new Vector3(0.5f, 1, 1);
+            leftArrow.localScale = new Vector3(0.5f, 1, 1);
+
+            MelonCoroutines.Start(ApplyArrowTransform(leftArrow, rightArrow));
+
+
+
             foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true))
-            {
-                ReplaceShader(item);
-                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += obj => MelonCoroutines.Start(UpdateShader(obj));
-            } 
-
-            while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
-                yield return null;
-
-            //do it a second time to make sure all sub components also got it
-            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true).Where(x=>x.GetComponent<EnableDisableListener>() == null))
             {
                 ReplaceShader(item);
                 item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += obj => MelonCoroutines.Start(UpdateShader(obj));
             }
 
-            
+            while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/SelectedGroupHighlightArrow")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
+                yield return null;
+
+            //do it a second time to make sure all sub components also got it
+            foreach (var item in cameraobj.Find("ViewFinder/PhotoControls").GetComponentsInChildren<CanvasRenderer>(true).Where(x => x.GetComponent<EnableDisableListener>() == null))
+            {
+                ReplaceShader(item);
+                item.gameObject.AddComponent<EnableDisableListener>().OnEnableEvent += obj => MelonCoroutines.Start(UpdateShader(obj));
+            }
+
+
 
             LoggerInstance.Msg("Disabled Overrender");
         }
 
+        private IEnumerator ApplyArrowTransform(Transform leftArrow, Transform rightArrow)
+        {
+            yield return new WaitForSeconds(1.5f);//make sure animation is done playing
+
+            var posRight = rightArrow.localPosition;
+            posRight.x = 530;
+            rightArrow.transform.localPosition = posRight;
+
+
+            var posLeft = leftArrow.localPosition;
+            posLeft.x = -530;
+            leftArrow.localPosition = posLeft;
+
+        }
 
         private IEnumerator UpdateShader(GameObject obj)
         {
@@ -100,7 +130,7 @@ namespace TouchCamera
 
         private void ReplaceShader(CanvasRenderer renderer)
         {
-            if (renderer.GetMaterial() == null || replacmentMaterials.ContainsValue(renderer.GetMaterial()) || (!renderer.GetMaterial().name.Contains("NotoSans-Regular") && !renderer.GetMaterial().name.Contains("VRChat/UI/Default") ))
+            if (renderer.GetMaterial() == null || replacmentMaterials.ContainsValue(renderer.GetMaterial()) || (!renderer.GetMaterial().name.Contains("NotoSans-Regular") && !renderer.GetMaterial().name.Contains("VRChat/UI/Default")))
                 return;
 
             var name = renderer.GetMaterial().name.Replace("(Clone)", "");
@@ -108,14 +138,14 @@ namespace TouchCamera
             {
                 LoggerInstance.Msg($"Creating a new material for {name}");
                 replacmentMaterials[name] = Object.Instantiate(renderer.GetMaterial());
-                replacmentMaterials[name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular")  ? uishaderTMPRO : uishader;
+                replacmentMaterials[name].shader = renderer.GetMaterial().name.Contains("NotoSans-Regular") ? uishaderTMPRO : uishader;
                 replacmentMaterials[name].hideFlags = HideFlags.HideAndDontSave;
             }
-            
+
             renderer.SetMaterial(replacmentMaterials[name], 0);
         }
 
-        private void SetLayerRecursively(GameObject obj,int newLayer)
+        private void SetLayerRecursively(GameObject obj, int newLayer)
         {
             obj.layer = newLayer;
             for (int i = 0; i < obj.transform.childCount; i++)
