@@ -1,7 +1,7 @@
 {
   "_id": 302,
   "name": "TouchCamera",
-  "modversion": "1.0.6",
+  "modversion": "1.0.8",
   "vrchatversion": "1160",
   "loaderversion": "v0.5.3",
   "modtype": "Mod",
@@ -12,8 +12,8 @@
   ],
   "requirements": [
   ],
-  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v1.0.6/TouchCamera.dll",
+  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v1.0.8/TouchCamera.dll",
   "sourcelink": "https://github.com/Er1807/VRCTouchCamera",
-  "changelog": "Initial Release",
+  "changelog": "Fixes Nullpointer Exception on startup\nReplaced the BBox collision detection since its just bad\n Made arrows bigger so they can be hit easier ",
   "embedcolor": "7F60CA"
 }

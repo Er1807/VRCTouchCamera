@@ -9,9 +9,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CameraUiAnimator = MonoBehaviourPublicReObSiObInSiBuReVeUnique;
+//using CameraUiAnimator = MonoBehaviourPublicReObSiObInSiBuReVeUnique;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.8", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.9", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
