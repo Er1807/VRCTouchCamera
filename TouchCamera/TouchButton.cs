@@ -29,6 +29,8 @@ namespace TouchCamera
         bool lastPressedLocal = false;
         static TouchButton lastTouchButton = null;
 
+        public MelonPreferences_Entry<Hands> selectedHand { get; internal set; }
+
         public TouchButton(IntPtr obj0) : base(obj0)
         {
             rectTransform = gameObject.GetComponent<RectTransform>();
@@ -66,26 +68,64 @@ namespace TouchCamera
         {
             if (lastInteraction + .5f > Time.time)
                 return;
-            Vector3? fingerPos = Networking.LocalPlayer?.GetBonePosition(HumanBodyBones.RightIndexDistal);
-            if (!fingerPos.HasValue)
+
+            if (Networking.LocalPlayer == null)
                 return;
 
             if (!IsVisible())
                 return;
+
             //Each corner provides its world space value. The returned array of 4 vertices is clockwise.
             //It starts bottom left and rotates to top left, then top right, and finally bottom right.
             //Note that bottom left, for example, is an (x, y, z) vector with x being left and y being bottom.
             rectTransform.GetWorldCorners(worldPosition);
 
             Plane plane = new Plane(worldPosition[0], worldPosition[1], worldPosition[2]);
-            Vector3 fingerPosValue = fingerPos.Value;
 
-            Vector3 closestPoint = plane.ClosestPointOnPlane(fingerPosValue);
 
-            float distance = Vector3.Distance(fingerPosValue, closestPoint);
+            bool isTouching = false;
+
+
+            Vector3 fingerPosRight = Networking.LocalPlayer.GetBonePosition(HumanBodyBones.RightIndexDistal);
+            Vector3 fingerPosLeft = Networking.LocalPlayer.GetBonePosition(HumanBodyBones.LeftIndexDistal);
+
+            if (selectedHand.Value == Hands.LeftHand || selectedHand.Value == Hands.BothHands)
+                isTouching |= CheckIfTouching(plane, fingerPosLeft);
+
+            if (selectedHand.Value == Hands.LeftHand || selectedHand.Value == Hands.BothHands)
+                isTouching |= CheckIfTouching(plane, fingerPosRight);
+
+
+
+
+            if (isTouching)
+            {
+                if (!lastPressed)
+                {
+                    lastPressed = true;
+                    lastPressedLocal = true;
+                    lastTouchButton = this;
+                    button?.Press();
+                    toggle?.InternalToggle();
+                }
+            }
+            else if (lastPressedLocal || !(lastTouchButton?.isActiveAndEnabled ?? true))
+            {
+                lastPressedLocal = false;
+                lastTouchButton = null;
+                lastPressed = false;
+                lastInteraction = Time.time;
+            }
+        }
+
+        private bool CheckIfTouching(Plane plane, Vector3 fingerPos)
+        {
+            Vector3 closestPoint = plane.ClosestPointOnPlane(fingerPos);
+
+            float distance = Vector3.Distance(fingerPos, closestPoint);
 
             if (distance > 0.05f)
-                return;
+                return false;
 
             float d1 = Vector3.Distance(closestPoint, worldPosition[0]);
             float d2 = Vector3.Distance(closestPoint, worldPosition[1]);
@@ -94,26 +134,10 @@ namespace TouchCamera
 
             float d = Vector3.Distance(worldPosition[0], worldPosition[1]);
 
+            return d1 < d && d2 < d && d3 < d && d4 < d;
 
 
-            if (d1 < d && d2 < d && d3 < d && d4 < d)
-            {
-                if (!lastPressed)
-                {
-                    lastPressed = true; 
-                    lastPressedLocal = true;
-                    lastTouchButton = this;
-                    button?.Press();
-                    toggle?.InternalToggle();
-                }
-            }
-            else if(lastPressedLocal || !(lastTouchButton?.isActiveAndEnabled ?? true))
-            {
-                lastPressedLocal = false;
-                lastTouchButton = null;
-                lastPressed = false;
-                lastInteraction = Time.time;
-            }
+
         }
     }
 }

@@ -9,20 +9,36 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-//using CameraUiAnimator = MonoBehaviourPublicReObSiObInSiBuReVeUnique;
+using System.ComponentModel;
+using CameraButton = MonoBehaviourPublicObGaCaTMImReImRaReSpUnique;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "1.0.9", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "2.0.0", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
 {
+    public enum Hands
+    {
+        [Description("Left Hande")]
+        LeftHand,
+        [Description("Right Hand")]
+        RightHand,
+        [Description("Both Hands")]
+        BothHands
+    }
 
+    public delegate void CameraReady();
     public class TouchCameraMod : MelonMod
     {
-
-
+        //API Event for registering new Buttonds
+        public static event CameraReady CameraReadyEvent;
+        private MelonPreferences_Entry<Hands> selectedhand;
         public override void OnApplicationStart()
         {
+            var category = MelonPreferences.CreateCategory("Touch Camera");
+            selectedhand = category.CreateEntry("Hand", Hands.RightHand, display_name: "Hand", description: "Used hand for interactions");
+
+
             MelonCoroutines.Start(WaitForCamera());
         }
 
@@ -35,15 +51,17 @@ namespace TouchCamera
             while (cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main/ControlGroup_Space/Scroll View/Viewport/Content/Attached/Icon")?.GetComponent<CanvasRenderer>()?.GetMaterial()?.shader == null)
                 yield return null;
 
+            CameraReadyEvent?.Invoke();
+
             var buttonParent = cameraobj.Find("ViewFinder/PhotoControls/Primary /ControlGroup_Main").gameObject;
             LoggerInstance.Msg("Registering TouchButton");
             foreach (var item in buttonParent.GetComponentsInChildren<Button>(true))
             {
-                item.gameObject.AddComponent<TouchButton>();
+                item.gameObject.AddComponent<TouchButton>().selectedHand = selectedhand;
             }
             foreach (var item in buttonParent.GetComponentsInChildren<Toggle>(true))
             {
-                item.gameObject.AddComponent<TouchButton>();
+                item.gameObject.AddComponent<TouchButton>().selectedHand = selectedhand;
             }
             LoggerInstance.Msg("Registered TouchButton");
 
