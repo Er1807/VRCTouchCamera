@@ -1,19 +1,19 @@
 {
   "_id": 302,
   "name": "TouchCamera",
-  "modversion": "1.0.9",
-  "vrchatversion": "1160",
+  "modversion": "2.0.0",
+  "vrchatversion": "1171",
   "loaderversion": "v0.5.3",
   "modtype": "Mod",
   "author": "Eric van Fandenfart",
-  "description": "Use the buttons on the camera as touch buttons. These are triggered by the right pointer finger",
+  "description": "Use the buttons on the camera as touch buttons. These are triggered by the right pointer finger. Using the UIX settings the hand used can be specified (default right hand)",
   "searchtags": [
     "Camera", "Touchscreen"
   ],
   "requirements": [
   ],
-  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v1.0.9/TouchCamera.dll",
+  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v2.0.0/TouchCamera.dll",
   "sourcelink": "https://github.com/Er1807/VRCTouchCamera",
-  "changelog": "Fixes Nullpointer Exception on startup\nReplaced the BBox collision detection since its just bad\n Made arrows bigger so they can be hit easier ",
+  "changelog": "Added Support for left and right hand support.\n Added API hook for other mods that gets called before touch init",
   "embedcolor": "7F60CA"
 }

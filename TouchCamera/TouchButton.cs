@@ -92,7 +92,7 @@ namespace TouchCamera
             if (selectedHand.Value == Hands.LeftHand || selectedHand.Value == Hands.BothHands)
                 isTouching |= CheckIfTouching(plane, fingerPosLeft);
 
-            if (selectedHand.Value == Hands.LeftHand || selectedHand.Value == Hands.BothHands)
+            if (selectedHand.Value == Hands.RightHand || selectedHand.Value == Hands.BothHands)
                 isTouching |= CheckIfTouching(plane, fingerPosRight);
 
 

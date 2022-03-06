@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using CameraButton = MonoBehaviourPublicObGaCaTMImReImRaReSpUnique;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "2.0.0", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "2.0.1", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
 {
     public enum Hands
     {
-        [Description("Left Hande")]
+        [Description("Left Hand")]
         LeftHand,
         [Description("Right Hand")]
         RightHand,
