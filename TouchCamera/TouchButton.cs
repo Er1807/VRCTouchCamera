@@ -29,7 +29,7 @@ namespace TouchCamera
         bool lastPressedLocal = false;
         static TouchButton lastTouchButton = null;
 
-        public MelonPreferences_Entry<Hands> selectedHand { get; internal set; }
+        public MelonPreferences_Entry<Hands> selectedHand;
 
         public TouchButton(IntPtr obj0) : base(obj0)
         {

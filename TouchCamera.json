@@ -1,7 +1,7 @@
 {
   "_id": 302,
   "name": "TouchCamera",
-  "modversion": "2.0.0",
+  "modversion": "2.0.1",
   "vrchatversion": "1171",
   "loaderversion": "v0.5.3",
   "modtype": "Mod",
@@ -12,8 +12,8 @@
   ],
   "requirements": [
   ],
-  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v2.0.0/TouchCamera.dll",
+  "downloadlink": "https://github.com/Er1807/VRCTouchCamera/releases/download/v2.0.1/TouchCamera.dll",
   "sourcelink": "https://github.com/Er1807/VRCTouchCamera",
-  "changelog": "Added Support for left and right hand support.\n Added API hook for other mods that gets called before touch init",
+  "changelog": "Added Support for left and right hand support.\n Added API hook for other mods that gets called before touch init (2.0.0 definitely worked. Nothing bad not mixed up right and left)",
   "embedcolor": "7F60CA"
 }

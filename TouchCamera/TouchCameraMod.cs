@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using CameraButton = MonoBehaviourPublicObGaCaTMImReImRaReSpUnique;
 
-[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "2.0.1", "Eric van Fandenfart")]
+[assembly: MelonInfo(typeof(TouchCameraMod), "TouchCamera", "2.0.2", "Eric van Fandenfart")]
 [assembly: MelonGame]
 
 namespace TouchCamera
